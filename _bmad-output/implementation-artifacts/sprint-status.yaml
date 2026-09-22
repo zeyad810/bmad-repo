@@ -1,0 +1,71 @@
+# generated: 2026-09-21
+# last_updated: 2026-09-22 (1-1 → review, epic-1 → in-progress, 1-2 → review, 1-3 → review, 1-4 → review, 1-5 → review, 1-6 → done, 1-7 → review, 1-8 → review, 1-9 → review)
+# project: Todo
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: {project-root}/_bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - Developer typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-09-21
+last_updated: 2026-09-22 (1-10 → review)
+project: Todo
+project_key: NOKEY
+tracking_system: file-system
+story_location: "{project-root}/_bmad-output/implementation-artifacts"
+
+development_status:
+  epic-1: in-progress
+  1-1-establish-graphite-violet-design-tokens-and-type-scale: review
+  1-2-priority-dot-component: review
+  1-3-task-row-component: review
+  1-4-quick-add-bar-and-silent-no-op-capture: review
+  1-5-section-divider-component: review
+  1-6-single-stream-home-layout-today-and-backlog-sections: done
+  1-7-drag-across-the-divider-to-promote-or-demote-a-task: review
+  1-8-complete-a-task-directly-from-the-backlog-section: review
+  1-9-quiet-motion-for-add-reprioritize-and-complete: review
+  1-10-quiet-initial-hydration-state: review
+  epic-1-retrospective: optional
+
+  epic-2: backlog
+  2-1-in-place-delete-confirm: backlog
+  2-2-restyle-task-editing-taskdrawer-and-taskform: backlog
+  2-3-restyle-buttons-and-enforce-hierarchy: backlog
+  2-4-restyle-empty-states: backlog
+  epic-2-retrospective: optional
+
+  epic-3: backlog
+  3-1-restyle-sidebar-and-bottomnav: backlog
+  3-2-responsive-breakpoint-and-touch-target-compliance: backlog
+  3-3-keyboard-accessible-reorder-fallback: backlog
+  3-4-accessibility-pass-contrast-focus-and-semantics: backlog
+  3-5-responsive-and-accessibility-test-coverage: backlog
+  epic-3-retrospective: optional
