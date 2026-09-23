@@ -1,30 +1,27 @@
+import type { ReactNode } from "react";
+
 interface EmptyStateProps {
-  icon?: React.ReactNode;
   title: string;
   description?: string;
-  action?: React.ReactNode;
+  action?: ReactNode;
 }
 
-export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
+// Spacing is min-height + gap only: the unlayered global reset in globals.css
+// (`* { margin: 0; padding: 0 }`) overrides Tailwind's padding/margin utilities.
+// min-h-32 (128px) also keeps the home page's SectionDropZone drop target sizable.
+const ROOT_CLASS = "flex min-h-32 flex-col items-center justify-center gap-4 text-center";
+const TEXT_GROUP_CLASS = "flex flex-col items-center gap-1";
+const TITLE_CLASS = "text-body font-medium text-[var(--text-dim)]";
+const DESCRIPTION_CLASS = "max-w-xs text-secondary text-[var(--text-dim)]";
+
+export function EmptyState({ title, description, action }: EmptyStateProps) {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "60px 24px",
-        gap: 12,
-        color: "var(--color-text-muted)",
-        textAlign: "center",
-      }}
-    >
-      {icon && (
-        <div style={{ fontSize: 40, marginBottom: 4, opacity: 0.5 }}>{icon}</div>
-      )}
-      <p style={{ fontSize: 15, fontWeight: 600, color: "var(--color-text)" }}>{title}</p>
-      {description && <p style={{ fontSize: 13, maxWidth: 320 }}>{description}</p>}
-      {action && <div style={{ marginTop: 8 }}>{action}</div>}
+    <div data-testid="empty-state" className={ROOT_CLASS}>
+      <div className={TEXT_GROUP_CLASS}>
+        <p className={TITLE_CLASS}>{title}</p>
+        {description && <p className={DESCRIPTION_CLASS}>{description}</p>}
+      </div>
+      {action}
     </div>
   );
 }

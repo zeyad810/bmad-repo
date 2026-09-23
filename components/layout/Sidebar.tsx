@@ -10,62 +10,95 @@ const navItems = [
   { href: "/completed", label: "Completed", icon: CheckCircle2 },
 ];
 
+// Layout uses gap/width/min-height only: the unlayered `*` reset in
+// globals.css zeroes every p-*/m-* utility (open Story 2.3 decision).
+const ASIDE_CLASS = "hidden w-63 shrink-0 flex-col items-center border-r border-[var(--border)] bg-[var(--bg)] md:flex";
+const CONTENT_CLASS = "flex w-55 flex-1 flex-col gap-8 self-center";
+const BRAND_LINK_CLASS =
+  "flex min-h-16 items-center gap-3 rounded-sm " +
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
+const BRAND_CHIP_CLASS =
+  "flex h-10 w-10 items-center justify-center rounded-sm border border-[var(--border)] bg-[var(--surface-2)] text-[var(--text)]";
+const BRAND_NAME_CLASS = "block text-body font-bold text-[var(--text)]";
+const BRAND_TAGLINE_CLASS = "block text-meta text-[var(--text-dim)]";
+const SECTION_LABEL_CLASS = "font-mono text-meta uppercase tracking-[0.08em] text-[var(--text-dim)]";
+
+// Active and inactive are separate constants so no link carries two
+// conflicting bg-*/text-* utilities. Only the soft background marks active.
+const NAV_ITEM_BASE_CLASS =
+  "grid min-h-10 grid-cols-[40px_1fr_32px] items-center rounded-sm text-secondary font-medium transition-colors " +
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
+const NAV_ITEM_ACTIVE_CLASS = "bg-[var(--accent-soft)] text-[var(--text)]";
+const NAV_ITEM_INACTIVE_CLASS = "text-[var(--text-dim)] hover:bg-[var(--surface-2)] hover:text-[var(--text)]";
+const NAV_ICON_CLASS = "justify-self-center";
+const NAV_COUNT_CLASS = "text-center font-mono text-meta tabular-nums text-[var(--text-dim)]";
+
+const STATS_CARD_CLASS = "flex flex-col items-center rounded-sm border border-[var(--border)] bg-[var(--surface)]";
+const STATS_INNER_CLASS = "flex w-[calc(100%-32px)] flex-col gap-3 min-h-36 justify-center";
+const STATS_NUMBER_CLASS = "font-mono text-section tabular-nums font-semibold text-[var(--text)]";
+const STATS_META_CLASS = "text-meta text-[var(--text-dim)]";
+const FOOTER_CLASS = "flex min-h-12 items-center gap-2 text-meta text-[var(--text-dim)]";
+
 export function Sidebar() {
   const pathname = usePathname();
   const stats = useStats();
 
   return (
-    <aside className="hidden w-[252px] shrink-0 flex-col border-r border-white/[0.07] bg-[#101113] px-4 py-5 lg:flex">
-      <Link href="/" className="mb-10 flex items-center gap-3 px-2">
-        <span className="flex h-10 w-10 items-center justify-center rounded-[13px] bg-amber-400 text-[#17120a] shadow-[0_8px_24px_rgba(245,158,11,0.18)]">
-          <CircleDot size={22} strokeWidth={2.5} />
-        </span>
-        <span>
-          <span className="block text-[15px] font-bold tracking-[-0.02em] text-white">StickyTasks</span>
-          <span className="mt-0.5 block text-[11px] text-zinc-500">Personal command center</span>
-        </span>
-      </Link>
+    <aside className={ASIDE_CLASS}>
+      <div className={CONTENT_CLASS}>
+        <Link href="/" className={BRAND_LINK_CLASS}>
+          <span data-testid="brand-mark" className={BRAND_CHIP_CLASS}>
+            <CircleDot size={20} strokeWidth={2} />
+          </span>
+          <span>
+            <span className={BRAND_NAME_CLASS}>StickyTasks</span>
+            <span className={BRAND_TAGLINE_CLASS}>Personal command center</span>
+          </span>
+        </Link>
 
-      <div className="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-600">Workspace</div>
-      <nav className="space-y-1">
-        {navItems.map((item) => {
-          const active = pathname === item.href;
-          const Icon = item.icon;
-          const count = item.href === "/" ? stats.active : stats.completedAll;
+        <div className="flex flex-col gap-3">
+          <div className={SECTION_LABEL_CLASS}>Workspace</div>
+          <nav aria-label="Primary" className="flex flex-col gap-1">
+            {navItems.map((item) => {
+              const active = pathname === item.href;
+              const Icon = item.icon;
+              const count = item.href === "/" ? stats.active : stats.completedAll;
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-colors ${
-                active ? "bg-amber-400/[0.12] text-amber-300" : "text-zinc-500 hover:bg-white/[0.04] hover:text-zinc-200"
-              }`}
-            >
-              <Icon size={17} strokeWidth={active ? 2.4 : 1.9} />
-              <span className="flex-1">{item.label}</span>
-              <span className={`text-[11px] ${active ? "text-amber-300" : "text-zinc-600"}`}>{count}</span>
-            </Link>
-          );
-        })}
-      </nav>
-
-      <div className="mt-auto rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4">
-        <div className="mb-3 flex items-center gap-2 text-zinc-400">
-          <BarChart3 size={15} className="text-amber-400" />
-          <span className="text-[11px] font-semibold uppercase tracking-[0.12em]">Today</span>
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`${NAV_ITEM_BASE_CLASS} ${active ? NAV_ITEM_ACTIVE_CLASS : NAV_ITEM_INACTIVE_CLASS}`}
+                >
+                  <Icon size={16} strokeWidth={2} className={NAV_ICON_CLASS} />
+                  <span>{item.label}</span>
+                  <span className={NAV_COUNT_CLASS}>{count}</span>
+                </Link>
+              );
+            })}
+          </nav>
         </div>
-        <div className="mb-3 flex items-end justify-between">
-          <span className="text-2xl font-semibold tracking-tight text-white">{stats.completedToday}</span>
-          <span className="pb-1 text-[11px] text-zinc-600">completed</span>
-        </div>
-        <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
-          <div className="h-full rounded-full bg-amber-400 transition-all" style={{ width: `${stats.active + stats.completedToday ? Math.min(100, (stats.completedToday / (stats.active + stats.completedToday)) * 100) : 0}%` }} />
-        </div>
-        <p className="mt-3 text-[11px] leading-relaxed text-zinc-600">Small wins add up. Keep your queue moving.</p>
-      </div>
 
-      <div className="mt-5 flex items-center gap-2 px-3 text-[11px] text-zinc-600">
-        <Sparkles size={13} /> Prioritize what matters
+        <div className="flex-1" />
+
+        <div className={STATS_CARD_CLASS}>
+          <div className={STATS_INNER_CLASS}>
+            <div className="flex items-center gap-2">
+              <BarChart3 size={14} className="text-[var(--text-dim)]" />
+              <span className={SECTION_LABEL_CLASS}>Today</span>
+            </div>
+            <div className="flex items-end justify-between">
+              <span className={STATS_NUMBER_CLASS}>{stats.completedToday}</span>
+              <span className={STATS_META_CLASS}>completed</span>
+            </div>
+            <p className={STATS_META_CLASS}>Small wins add up. Keep your queue moving.</p>
+          </div>
+        </div>
+
+        <div className={FOOTER_CLASS}>
+          <Sparkles size={13} /> Prioritize what matters
+        </div>
       </div>
     </aside>
   );

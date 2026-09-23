@@ -3,9 +3,11 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { Pin } from "lucide-react";
 import { Task, TaskPriority, TaskStatus } from "@/types";
 import { useTaskStore } from "@/stores/task-store";
 import { Button } from "@/components/ui/Button";
+import { PriorityDot } from "@/components/ui/PriorityDot";
 import { calculatePriorityScore } from "@/lib/prioritization/score";
 import { useMemo } from "react";
 
@@ -31,11 +33,11 @@ interface TaskFormProps {
   onClose: () => void;
 }
 
-const PRIORITY_OPTIONS: { value: TaskPriority; label: string; color: string }[] = [
-  { value: "critical", label: "🔴 Critical", color: "var(--color-critical)" },
-  { value: "high", label: "🟠 High", color: "var(--color-high)" },
-  { value: "medium", label: "🟡 Medium", color: "var(--color-medium)" },
-  { value: "low", label: "🟢 Low", color: "var(--color-low)" },
+const PRIORITY_OPTIONS: { value: TaskPriority; label: string }[] = [
+  { value: "critical", label: "Critical" },
+  { value: "high", label: "High" },
+  { value: "medium", label: "Medium" },
+  { value: "low", label: "Low" },
 ];
 
 const STATUS_OPTIONS: { value: TaskStatus; label: string }[] = [
@@ -45,32 +47,16 @@ const STATUS_OPTIONS: { value: TaskStatus; label: string }[] = [
   { value: "completed", label: "Completed" },
 ];
 
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  background: "var(--color-surface-2)",
-  border: "1px solid var(--color-border-2)",
-  borderRadius: "var(--radius-sm)",
-  color: "var(--color-text)",
-  padding: "9px 12px",
-  fontSize: 14,
-  outline: "none",
-};
-
-const labelStyle: React.CSSProperties = {
-  display: "block",
-  fontSize: 12,
-  fontWeight: 600,
-  color: "var(--color-text-muted)",
-  marginBottom: 6,
-  textTransform: "uppercase",
-  letterSpacing: "0.06em",
-};
-
-const fieldStyle: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  gap: 0,
-};
+const FIELD_CLASS = "flex flex-col";
+// Split so callers can swap margin / border color without conflicting utilities.
+const LABEL_TEXT_CLASS = "block font-mono text-meta uppercase tracking-[0.08em] text-[var(--text-dim)]";
+const LABEL_CLASS = `mb-2 ${LABEL_TEXT_CLASS}`;
+const INPUT_BASE_CLASS =
+  "w-full rounded-lg border bg-[var(--surface-2)] px-3.5 py-2.5 text-[var(--text)] placeholder:text-[var(--text-dim)] transition-colors focus:border-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
+const INPUT_CLASS = `${INPUT_BASE_CLASS} border-[var(--border)] text-secondary`;
+const RANGE_CLASS = "w-full cursor-pointer accent-[var(--accent)]";
+const RANGE_CAPTION_CLASS = "mt-1 flex justify-between text-meta text-[var(--text-dim)]";
+const RANGE_VALUE_CLASS = "font-mono text-secondary tabular-nums text-[var(--accent)]";
 
 export function TaskForm({ task, onClose }: TaskFormProps) {
   const { addTask, updateTask, tasks } = useTaskStore();
@@ -157,67 +143,67 @@ export function TaskForm({ task, onClose }: TaskFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
       {/* Live Score */}
-      <div
-        style={{
-          background: "var(--color-accent-subtle)",
-          border: "1px solid rgba(124,109,250,0.2)",
-          borderRadius: "var(--radius-md)",
-          padding: "12px 16px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <span style={{ fontSize: 13, color: "var(--color-text-muted)" }}>Priority Score</span>
-        <span style={{ fontSize: 22, fontWeight: 700, color: "var(--color-accent)" }}>
+      <div className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--accent-soft)] px-4 py-3">
+        <span className="text-secondary text-[var(--text-dim)]">Priority Score</span>
+        <span className="font-mono text-section font-semibold tabular-nums text-[var(--accent)]">
           {liveScore}
         </span>
       </div>
 
       {/* Title */}
-      <div style={fieldStyle}>
-        <label style={labelStyle}>Title *</label>
+      <div className={FIELD_CLASS}>
+        <label htmlFor="task-title" className={LABEL_CLASS}>Title</label>
         <input
+          id="task-title"
           {...register("title")}
           placeholder="What needs to be done?"
-          style={{ ...inputStyle, fontSize: 15 }}
+          aria-invalid={errors.title ? "true" : undefined}
+          aria-describedby={errors.title ? "title-error" : undefined}
+          className={`${INPUT_BASE_CLASS} text-body ${errors.title ? "border-[var(--text-dim)]" : "border-[var(--border)]"}`}
           autoFocus
         />
         {errors.title && (
-          <span style={{ color: "var(--color-critical)", fontSize: 12, marginTop: 4 }}>
+          <p id="title-error" className="mt-1 text-meta text-[var(--text-dim)]">
             {errors.title.message}
-          </span>
+          </p>
         )}
       </div>
 
       {/* Description */}
-      <div style={fieldStyle}>
-        <label style={labelStyle}>Description</label>
+      <div className={FIELD_CLASS}>
+        <label htmlFor="task-description" className={LABEL_CLASS}>Description</label>
         <textarea
+          id="task-description"
           {...register("description")}
           placeholder="Add details..."
           rows={3}
-          style={{ ...inputStyle, resize: "vertical", fontFamily: "inherit" }}
+          className={`${INPUT_CLASS} resize-y`}
         />
       </div>
 
       {/* Priority + Status */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-        <div style={fieldStyle}>
-          <label style={labelStyle}>Priority</label>
-          <select {...register("priority")} style={inputStyle}>
-            {PRIORITY_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
+      <div className="grid grid-cols-2 gap-3">
+        <div className={FIELD_CLASS}>
+          <label htmlFor="task-priority" className={LABEL_CLASS}>Priority</label>
+          <div data-testid="priority-field" className="relative">
+            <PriorityDot
+              priority={priority}
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2"
+            />
+            <select id="task-priority" {...register("priority")} className={`${INPUT_BASE_CLASS} border-[var(--border)] pl-9 pr-4 text-secondary`}>
+              {PRIORITY_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-        <div style={fieldStyle}>
-          <label style={labelStyle}>Status</label>
-          <select {...register("status")} style={inputStyle}>
+        <div className={FIELD_CLASS}>
+          <label htmlFor="task-status" className={LABEL_CLASS}>Status</label>
+          <select id="task-status" {...register("status")} className={INPUT_CLASS}>
             {STATUS_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
                 {o.label}
@@ -228,127 +214,115 @@ export function TaskForm({ task, onClose }: TaskFormProps) {
       </div>
 
       {/* Importance */}
-      <div style={fieldStyle}>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-          <label style={labelStyle}>Importance</label>
-          <span style={{ fontSize: 13, fontWeight: 700, color: "var(--color-accent)" }}>
-            {importance}/10
-          </span>
+      <div className={FIELD_CLASS}>
+        <div className="mb-2 flex items-baseline justify-between">
+          <label htmlFor="task-importance" className={LABEL_TEXT_CLASS}>Importance</label>
+          <span className={RANGE_VALUE_CLASS}>{importance}/10</span>
         </div>
         <input
+          id="task-importance"
           type="range"
           min={1}
           max={10}
           step={1}
           {...register("importance", { valueAsNumber: true })}
-          style={{ width: "100%", accentColor: "var(--color-accent)", cursor: "pointer" }}
+          className={RANGE_CLASS}
         />
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "var(--color-text-subtle)", marginTop: 2 }}>
+        <div className={RANGE_CAPTION_CLASS}>
           <span>Not Important</span>
           <span>Critical</span>
         </div>
       </div>
 
       {/* Urgency */}
-      <div style={fieldStyle}>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-          <label style={labelStyle}>Urgency</label>
-          <span style={{ fontSize: 13, fontWeight: 700, color: "var(--color-high)" }}>
-            {urgency}/10
-          </span>
+      <div className={FIELD_CLASS}>
+        <div className="mb-2 flex items-baseline justify-between">
+          <label htmlFor="task-urgency" className={LABEL_TEXT_CLASS}>Urgency</label>
+          <span className={RANGE_VALUE_CLASS}>{urgency}/10</span>
         </div>
         <input
+          id="task-urgency"
           type="range"
           min={1}
           max={10}
           step={1}
           {...register("urgency", { valueAsNumber: true })}
-          style={{ width: "100%", accentColor: "var(--color-high)", cursor: "pointer" }}
+          className={RANGE_CLASS}
         />
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "var(--color-text-subtle)", marginTop: 2 }}>
+        <div className={RANGE_CAPTION_CLASS}>
           <span>Can Wait</span>
           <span>Urgent Now</span>
         </div>
       </div>
 
       {/* Due Date + Estimate */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-        <div style={fieldStyle}>
-          <label style={labelStyle}>Due Date</label>
-          <input type="date" {...register("dueDate")} style={inputStyle} />
+      <div className="grid grid-cols-2 gap-3">
+        <div className={FIELD_CLASS}>
+          <label htmlFor="task-due" className={LABEL_CLASS}>Due Date</label>
+          <input id="task-due" type="date" {...register("dueDate")} className={INPUT_CLASS} />
         </div>
-        <div style={fieldStyle}>
-          <label style={labelStyle}>Est. Minutes</label>
+        <div className={FIELD_CLASS}>
+          <label htmlFor="task-estimate" className={LABEL_CLASS}>Est. Minutes</label>
           <input
+            id="task-estimate"
             type="number"
             min={0}
             placeholder="e.g. 45"
             {...register("estimatedMinutes", { valueAsNumber: true })}
-            style={inputStyle}
+            className={INPUT_CLASS}
           />
         </div>
       </div>
 
       {/* Category + Tags */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-        <div style={fieldStyle}>
-          <label style={labelStyle}>Category</label>
-          <input {...register("category")} placeholder="e.g. Work" style={inputStyle} />
+      <div className="grid grid-cols-2 gap-3">
+        <div className={FIELD_CLASS}>
+          <label htmlFor="task-category" className={LABEL_CLASS}>Category</label>
+          <input id="task-category" {...register("category")} placeholder="e.g. Work" className={INPUT_CLASS} />
         </div>
-        <div style={fieldStyle}>
-          <label style={labelStyle}>Tags</label>
-          <input {...register("tags")} placeholder="tag1, tag2" style={inputStyle} />
+        <div className={FIELD_CLASS}>
+          <label htmlFor="task-tags" className={LABEL_CLASS}>Tags</label>
+          <input id="task-tags" {...register("tags")} placeholder="tag1, tag2" className={INPUT_CLASS} />
         </div>
       </div>
 
       {/* Dependencies */}
       {availableDependencies.length > 0 && (
-        <div style={fieldStyle}>
-          <label style={labelStyle}>Blocked by (Dependencies)</label>
-          <div
-            style={{
-              background: "var(--color-surface-2)",
-              border: "1px solid var(--color-border-2)",
-              borderRadius: "var(--radius-sm)",
-              padding: "8px 12px",
-              display: "flex",
-              flexDirection: "column",
-              gap: 6,
-              maxHeight: 140,
-              overflowY: "auto",
-            }}
-          >
+        <fieldset className={FIELD_CLASS}>
+          <legend className={LABEL_CLASS}>Blocked by (Dependencies)</legend>
+          <div className="flex max-h-36 flex-col gap-2 overflow-y-auto rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2">
             {availableDependencies.map((dep) => (
-              <label key={dep.id} style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 13 }}>
+              <label key={dep.id} className="flex cursor-pointer items-center gap-2 text-secondary">
                 <input
                   type="checkbox"
                   value={dep.id}
                   {...register("dependencies")}
-                  style={{ accentColor: "var(--color-accent)" }}
+                  className="accent-[var(--accent)]"
                 />
-                <span style={{ color: "var(--color-text)" }}>{dep.title}</span>
+                <span className="text-[var(--text)]">{dep.title}</span>
               </label>
             ))}
           </div>
-        </div>
+        </fieldset>
       )}
 
       {/* Pin */}
-      <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", fontSize: 14 }}>
+      <label className="flex cursor-pointer items-center gap-3 text-secondary">
         <input
           type="checkbox"
           {...register("isPinned")}
-          style={{ accentColor: "var(--color-accent)", width: 16, height: 16 }}
+          className="h-4 w-4 accent-[var(--accent)]"
         />
-        <span style={{ color: "var(--color-text-muted)" }}>📌 Pin this task to the top</span>
+        <Pin size={14} className="text-[var(--text-dim)]" aria-hidden="true" />
+        <span className="text-[var(--text-dim)]">Pin this task to the top</span>
       </label>
 
       {/* Actions */}
-      <div style={{ display: "flex", gap: 10, paddingTop: 8, borderTop: "1px solid var(--color-border)" }}>
-        <Button type="submit" variant="primary" size="md" style={{ flex: 1 }} disabled={isSubmitting}>
+      <div className="flex gap-3 border-t border-[var(--border)] pt-4">
+        <Button type="submit" variant="primary" size="md" className="flex-1 min-h-11 px-4" disabled={isSubmitting}>
           {isEdit ? "Save Changes" : "Create Task"}
         </Button>
-        <Button type="button" variant="ghost" size="md" onClick={onClose}>
+        <Button type="button" variant="secondary" size="md" className="min-h-11 px-5" onClick={onClose}>
           Cancel
         </Button>
       </div>

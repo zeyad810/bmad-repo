@@ -25,10 +25,29 @@ cp .env.example .env.local
 | Command | Description |
 | :--- | :--- |
 | `npm run test:e2e` | Run all E2E tests headless |
+| `npm run test:e2e:a11y` | Run the accessibility, responsive journey, and touch-target gate |
 | `npm run test:e2e:ui` | Run tests with interactive Playwright UI mode |
 | `npm run test:e2e:headed` | Run tests in headed browser mode |
 | `npm run test:e2e:debug` | Run tests in debug step-by-step mode |
 | `npm run test:e2e:report` | View the generated HTML test report |
+
+### Run Against a Production Build
+
+Use a clean port to build and serve the production application before Playwright runs.
+
+PowerShell:
+
+```powershell
+$env:E2E_PROD='1'; $env:BASE_URL='http://localhost:3100'; npx playwright test --project=chromium
+```
+
+Bash:
+
+```bash
+E2E_PROD=1 BASE_URL=http://localhost:3100 npx playwright test --project=chromium
+```
+
+Unset `E2E_PROD` to return to the default development-server flow.
 
 ---
 
@@ -37,6 +56,7 @@ cp .env.example .env.local
 - **`tests/e2e/`**: Spec files for UI and API tests (`*.spec.ts`).
 - **`tests/support/merged-fixtures.ts`**: Merged Playwright fixtures (`test`, `expect`). Always import `test` from here instead of `@playwright/test`.
 - **`tests/support/auth-fixture.ts`**: Reusable auth provider and token fixtures.
+- **`tests/support/fixtures/axe-fixture.ts`**: WCAG-tagged axe builder fixture and readable violation formatting.
 - **`tests/support/factories/`**: Test data factory functions (e.g. `createTaskFactory`).
 
 ---

@@ -5,58 +5,36 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: "sm" | "md" | "lg";
 }
 
-const VARIANT_STYLES: Record<string, React.CSSProperties> = {
-  primary: {
-    background: "var(--color-accent)",
-    color: "white",
-    border: "none",
-  },
-  secondary: {
-    background: "var(--color-surface-2)",
-    color: "var(--color-text)",
-    border: "1px solid var(--color-border-2)",
-  },
-  ghost: {
-    background: "transparent",
-    color: "var(--color-text-muted)",
-    border: "none",
-  },
-  danger: {
-    background: "var(--color-critical-subtle)",
-    color: "var(--color-critical)",
-    border: "1px solid rgba(239,68,68,0.2)",
-  },
+// Border color lives only in the variant maps (never in BASE_CLASS) so no
+// element carries two conflicting utilities for the same property.
+const BASE_CLASS =
+  "inline-flex items-center justify-center gap-2 border font-medium transition-opacity enabled:hover:opacity-85 " +
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] " +
+  "disabled:cursor-not-allowed disabled:opacity-50";
+
+// Danger has no red token in Graphite Violet: it's an inverted --text fill,
+// shown only for an armed (confirm-pending) delete — never on first tap.
+const VARIANT_CLASS: Record<NonNullable<ButtonProps["variant"]>, string> = {
+  primary: "border-transparent bg-[var(--accent)] text-[var(--bg)]",
+  secondary: "border-[var(--border)] bg-[var(--surface-2)] text-[var(--text)]",
+  ghost: "border-transparent bg-transparent text-[var(--text-dim)] hover:text-[var(--text)]",
+  danger: "border-[var(--text)] bg-[var(--text)] text-[var(--bg)]",
 };
 
-const SIZE_STYLES: Record<string, React.CSSProperties> = {
-  sm: { padding: "5px 12px", fontSize: 12, borderRadius: "var(--radius-sm)" },
-  md: { padding: "8px 16px", fontSize: 14, borderRadius: "var(--radius-md)" },
-  lg: { padding: "11px 22px", fontSize: 15, borderRadius: "var(--radius-md)" },
+// rounded-sm is 8px in this theme (@theme overrides --radius-*).
+const SIZE_CLASS: Record<NonNullable<ButtonProps["size"]>, string> = {
+  sm: "rounded-sm px-3.5 py-1.5 text-meta min-h-8",
+  md: "rounded-sm px-4 py-2.5 text-secondary min-h-10",
+  lg: "rounded-sm px-6 py-3.5 text-body min-h-12",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = "secondary", size = "md", style, children, ...props }, ref) => {
+  ({ variant = "secondary", size = "md", className, children, ...props }, ref) => {
     return (
       <button
         ref={ref}
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 6,
-          fontWeight: 500,
-          cursor: "pointer",
-          transition: "opacity 0.15s ease, transform 0.1s ease",
-          ...VARIANT_STYLES[variant],
-          ...SIZE_STYLES[size],
-          ...style,
-        }}
-        onMouseOver={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.opacity = "0.85";
-        }}
-        onMouseOut={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.opacity = "1";
-        }}
+        data-variant={variant}
+        className={[BASE_CLASS, VARIANT_CLASS[variant], SIZE_CLASS[size], className].filter(Boolean).join(" ")}
         {...props}
       >
         {children}

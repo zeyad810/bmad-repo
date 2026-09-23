@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test:e2e": "playwright test",
+    "test:e2e:a11y": "playwright test tests/e2e/axe-scan.spec.ts tests/e2e/core-journeys.spec.ts tests/e2e/touch-targets.spec.ts",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
@@ -28,6 +29,7 @@
     "zustand": "^5.0.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.63.0",
     "@seontechnologies/playwright-utils": "^4.4.0",
     "@tailwindcss/postcss": "^4",

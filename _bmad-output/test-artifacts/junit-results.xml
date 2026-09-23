@@ -1,170 +1,60 @@
-<testsuites id="" name="" tests="27" failures="0" skipped="1" errors="9" time="355.496421">
-<testsuite name="api-tasks.spec.ts" timestamp="2026-09-22T11:45:55.137Z" hostname="webkit" tests="1" failures="0" skipped="0" time="0.402" errors="0">
-<testcase name="Task Management API › should return 200 OK or appropriate status on health / root check" classname="api-tasks.spec.ts" time="0.402">
-</testcase>
-</testsuite>
-<testsuite name="complete-from-backlog.spec.ts" timestamp="2026-09-22T11:45:55.137Z" hostname="webkit" tests="3" failures="0" skipped="0" time="71.647" errors="0">
-<testcase name="Complete a task directly from Backlog › 1.8-E2E-001 (P0): complete task directly from Backlog moves it out of Backlog into Completed view" classname="complete-from-backlog.spec.ts" time="14.773">
-</testcase>
-<testcase name="Complete a task directly from Backlog › 1.8-E2E-002 (P1): Backlog checkbox uses same affordance as Today with no extra step or modal" classname="complete-from-backlog.spec.ts" time="27.237">
-</testcase>
-<testcase name="Complete a task directly from Backlog › 1.8-E2E-003 (P2): active task count decreases and completed count increases after Backlog completion" classname="complete-from-backlog.spec.ts" time="29.637">
-</testcase>
-</testsuite>
-<testsuite name="drag-across-divider.spec.ts" timestamp="2026-09-22T11:45:55.137Z" hostname="webkit" tests="4" failures="0" skipped="0" time="66.91" errors="0">
-<testcase name="Drag across the Today/Backlog divider › 1.7-E2E-001 (P0): dragging a Backlog task into Today sets status to next" classname="drag-across-divider.spec.ts" time="23.929">
-</testcase>
-<testcase name="Drag across the Today/Backlog divider › 1.7-E2E-002 (P0): dragging a Today task into Backlog sets status to backlog" classname="drag-across-divider.spec.ts" time="8.477">
-</testcase>
-<testcase name="Drag across the Today/Backlog divider › 1.7-E2E-003 (P1): same-section drag only changes position, not status" classname="drag-across-divider.spec.ts" time="13.521">
-</testcase>
-<testcase name="Drag across the Today/Backlog divider › 1.7-E2E-004 (P2): promote/demote drag settles with no confirmation dialog or toast" classname="drag-across-divider.spec.ts" time="20.983">
-</testcase>
-</testsuite>
-<testsuite name="hydration-skeleton.spec.ts" timestamp="2026-09-22T11:45:55.137Z" hostname="webkit" tests="2" failures="0" skipped="1" time="9.813" errors="0">
-<testcase name="Quiet initial hydration state › 1.10-E2E-001 (P1): shows a skeleton before hydration, never a spinner" classname="hydration-skeleton.spec.ts">
-<properties>
-<property name="skip" value="CPU throttling requires a CDP session, only available on Chromium — see Dev Notes for this documented cross-browser gap.">
-</property>
-</properties>
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Quiet initial hydration state › 1.10-E2E-002 (P1): after hydration, skeleton is gone and real content renders with tokens applied" classname="hydration-skeleton.spec.ts" time="8.666">
-</testcase>
-</testsuite>
-<testsuite name="quick-add-bar.spec.ts" timestamp="2026-09-22T11:45:55.137Z" hostname="webkit" tests="5" failures="0" skipped="0" time="52.953" errors="0">
-<testcase name="Quick add bar › 1.4-E2E-001 (P0): valid text creates a task at the position matching its priority score" classname="quick-add-bar.spec.ts" time="14.944">
-</testcase>
-<testcase name="Quick add bar › 1.4-E2E-002 (P1, risk EPIC1-R06): empty submit is a silent no-op" classname="quick-add-bar.spec.ts" time="13.877">
-</testcase>
-<testcase name="Quick add bar › 1.4-E2E-003 (P1): aria-label, Escape clears without losing focus, mono hint visible" classname="quick-add-bar.spec.ts" time="11.499">
-</testcase>
-<testcase name="Quick add bar › 1.4-E2E-004 (P2): input refocuses and clears after a successful add" classname="quick-add-bar.spec.ts" time="8.172">
-</testcase>
-<testcase name="Quick add bar › 1.4-E2E-005 (P2): border shows --accent when focused, --border when not" classname="quick-add-bar.spec.ts" time="4.461">
-</testcase>
-</testsuite>
-<testsuite name="quiet-motion.spec.ts" timestamp="2026-09-22T11:45:55.137Z" hostname="webkit" tests="4" failures="0" skipped="0" time="130.72" errors="1">
-<testcase name="Quiet motion for add, reprioritize, and complete › 1.9-E2E-001 (P2): adding a task shows no toast/banner and uses the entry transition" classname="quiet-motion.spec.ts" time="6.154">
-</testcase>
-<testcase name="Quiet motion for add, reprioritize, and complete › 1.9-E2E-002 (P2): same-section drag settle shows no modal/banner" classname="quiet-motion.spec.ts" time="44.245">
-</testcase>
-<testcase name="Quiet motion for add, reprioritize, and complete › 1.9-E2E-003 (P2): completing a task fades/strikes through with no confetti/popup/banner" classname="quiet-motion.spec.ts" time="33.785">
-</testcase>
-<testcase name="Quiet motion for add, reprioritize, and complete › 1.9-E2E-004 (P2): no spinner appears during add, reorder, or complete" classname="quiet-motion.spec.ts" time="46.536">
+<testsuites id="" name="" tests="1" failures="1" skipped="0" errors="0" time="18.083924">
+<testsuite name="delete-confirm.spec.ts" timestamp="2026-09-23T10:13:03.521Z" hostname="chromium" tests="1" failures="1" skipped="0" time="17.108" errors="0">
+<testcase name="In-place delete confirm › 2.1-E2E-005 (P2): Clear archive uses in-place confirm instead of window.confirm()" classname="delete-confirm.spec.ts" time="17.108">
 <system-out>
 <![CDATA[
-[[ATTACHMENT|..\..\test-results\quiet-motion-Quiet-motion--56f0e-ing-add-reorder-or-complete-webkit\test-failed-1.png]]
+[[ATTACHMENT|..\..\test-results\delete-confirm-In-place-de-3b95e--instead-of-window-confirm--chromium\test-failed-1.png]]
 
-[[ATTACHMENT|..\..\test-results\quiet-motion-Quiet-motion--56f0e-ing-add-reorder-or-complete-webkit\error-context.md]]
+[[ATTACHMENT|..\..\test-results\delete-confirm-In-place-de-3b95e--instead-of-window-confirm--chromium\video.webm]]
 
-[[ATTACHMENT|..\..\test-results\quiet-motion-Quiet-motion--56f0e-ing-add-reorder-or-complete-webkit\trace.zip]]
+[[ATTACHMENT|..\..\test-results\delete-confirm-In-place-de-3b95e--instead-of-window-confirm--chromium\error-context.md]]
+
+[[ATTACHMENT|..\..\test-results\delete-confirm-In-place-de-3b95e--instead-of-window-confirm--chromium\trace.zip]]
 ]]>
 </system-out>
-<error message="locator.click: Timeout 15000ms exceeded." type="TimeoutError">
-<![CDATA[  [webkit] › quiet-motion.spec.ts:110:7 › Quiet motion for add, reprioritize, and complete › 1.9-E2E-004 (P2): no spinner appears during add, reorder, or complete 
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+<![CDATA[  [chromium] › delete-confirm.spec.ts:111:7 › In-place delete confirm › 2.1-E2E-005 (P2): Clear archive uses in-place confirm instead of window.confirm() 
 
-    TimeoutError: locator.click: Timeout 15000ms exceeded.
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Delete Me 5b')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
     Call log:
-      - waiting for getByLabel('Add a task')
+      - Expect "toBeVisible" getByText('Delete Me 5b') with timeout 15000ms
+      - waiting for getByText('Delete Me 5b')
 
 
-      23 | async function quickAdd(page: import('@playwright/test').Page, title: string) {
-      24 |   const input = page.getByLabel('Add a task');
-    > 25 |   await input.click();
-         |               ^
-      26 |   await input.fill(title);
-      27 |   await input.press('Enter');
-      28 |   if (!(await page.getByText(title).isVisible().catch(() => false))) {
-        at quickAdd (C:\Users\User\Desktop\Todo\tests\e2e\quiet-motion.spec.ts:25:15)
-        at C:\Users\User\Desktop\Todo\tests\e2e\quiet-motion.spec.ts:115:11
+      121 |     await page.goto('/completed');
+      122 |     await expect(page.getByText('Delete Me 5a')).toBeVisible();
+    > 123 |     await expect(page.getByText('Delete Me 5b')).toBeVisible();
+          |                                                  ^
+      124 |
+      125 |     const clearBtn = page.getByRole('button', { name: /clear archive/i });
+      126 |     await clearBtn.click();
+        at C:\Users\user\Desktop\Bmad Todo\bmad-repo\tests\e2e\delete-confirm.spec.ts:123:50
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\quiet-motion-Quiet-motion--56f0e-ing-add-reorder-or-complete-webkit\test-failed-1.png
+    ..\..\test-results\delete-confirm-In-place-de-3b95e--instead-of-window-confirm--chromium\test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ..\..\test-results\quiet-motion-Quiet-motion--56f0e-ing-add-reorder-or-complete-webkit\error-context.md
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\delete-confirm-In-place-de-3b95e--instead-of-window-confirm--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
-    ..\..\test-results\quiet-motion-Quiet-motion--56f0e-ing-add-reorder-or-complete-webkit\trace.zip
+    Error Context: ..\..\test-results\delete-confirm-In-place-de-3b95e--instead-of-window-confirm--chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\test-results\delete-confirm-In-place-de-3b95e--instead-of-window-confirm--chromium\trace.zip
     Usage:
 
-        npx playwright show-trace ..\..\test-results\quiet-motion-Quiet-motion--56f0e-ing-add-reorder-or-complete-webkit\trace.zip
+        npx playwright show-trace ..\..\test-results\delete-confirm-In-place-de-3b95e--instead-of-window-confirm--chromium\trace.zip
 
     ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
-</error>
-</testcase>
-</testsuite>
-<testsuite name="single-stream-layout.spec.ts" timestamp="2026-09-22T11:45:55.137Z" hostname="webkit" tests="5" failures="0" skipped="0" time="0" errors="5">
-<testcase name="Single Stream home layout › 1.6-E2E-001 (P0): renders QuickAddBar, Today, SectionDivider, Backlog in order" classname="single-stream-layout.spec.ts" time="0">
-<error message="worker process exited unexpectedly (code=3221225794, signal=null)" type="Error">
-<![CDATA[  [webkit] › single-stream-layout.spec.ts:6:7 › Single Stream home layout › 1.6-E2E-001 (P0): renders QuickAddBar, Today, SectionDivider, Backlog in order 
-
-    Error: worker process exited unexpectedly (code=3221225794, signal=null)
-]]>
-</error>
-</testcase>
-<testcase name="Single Stream home layout › 1.6-E2E-002 (P1): a quick-added task defaults into the Today section, not Backlog" classname="single-stream-layout.spec.ts" time="0">
-<error message="worker process exited unexpectedly (code=3221225794, signal=null)" type="Error">
-<![CDATA[  [webkit] › single-stream-layout.spec.ts:30:7 › Single Stream home layout › 1.6-E2E-002 (P1): a quick-added task defaults into the Today section, not Backlog 
-
-    Error: worker process exited unexpectedly (code=3221225794, signal=null)
-]]>
-</error>
-</testcase>
-<testcase name="Single Stream home layout › 1.6-E2E-003 (P1): Today section follows the recommended (score-descending) sort" classname="single-stream-layout.spec.ts" time="0">
-<error message="worker process exited unexpectedly (code=3221225794, signal=null)" type="Error">
-<![CDATA[  [webkit] › single-stream-layout.spec.ts:48:7 › Single Stream home layout › 1.6-E2E-003 (P1): Today section follows the recommended (score-descending) sort 
-
-    Error: worker process exited unexpectedly (code=3221225794, signal=null)
-]]>
-</error>
-</testcase>
-<testcase name="Single Stream home layout › 1.6-E2E-004 (P2): a task moved to Backlog renders at .88 opacity" classname="single-stream-layout.spec.ts" time="0">
-<error message="worker process exited unexpectedly (code=3221225794, signal=null)" type="Error">
-<![CDATA[  [webkit] › single-stream-layout.spec.ts:77:7 › Single Stream home layout › 1.6-E2E-004 (P2): a task moved to Backlog renders at .88 opacity 
-
-    Error: worker process exited unexpectedly (code=3221225794, signal=null)
-]]>
-</error>
-</testcase>
-<testcase name="Single Stream home layout › 1.6-E2E-005 (P2): Today empty-state shows when only Backlog has tasks" classname="single-stream-layout.spec.ts" time="0">
-<error message="worker process exited unexpectedly (code=3221225794, signal=null)" type="Error">
-<![CDATA[  [webkit] › single-stream-layout.spec.ts:97:7 › Single Stream home layout › 1.6-E2E-005 (P2): Today empty-state shows when only Backlog has tasks 
-
-    Error: worker process exited unexpectedly (code=3221225794, signal=null)
-]]>
-</error>
-</testcase>
-</testsuite>
-<testsuite name="task-reorder.spec.ts" timestamp="2026-09-22T11:45:55.137Z" hostname="webkit" tests="1" failures="0" skipped="0" time="0" errors="1">
-<testcase name="Task reorder via drag-and-drop › dragging a task row above another reorders the queue" classname="task-reorder.spec.ts" time="0">
-<error message="worker process exited unexpectedly (code=3221225794, signal=null)" type="Error">
-<![CDATA[  [webkit] › task-reorder.spec.ts:7:7 › Task reorder via drag-and-drop › dragging a task row above another reorders the queue 
-
-    Error: worker process exited unexpectedly (code=3221225794, signal=null)
-]]>
-</error>
-</testcase>
-</testsuite>
-<testsuite name="tasks.spec.ts" timestamp="2026-09-22T11:45:55.137Z" hostname="webkit" tests="2" failures="0" skipped="0" time="0" errors="2">
-<testcase name="Task Management UI › should display main task page header and empty state or task list" classname="tasks.spec.ts" time="0">
-<error message="worker process exited unexpectedly (code=3221225794, signal=null)" type="Error">
-<![CDATA[  [webkit] › tasks.spec.ts:5:7 › Task Management UI › should display main task page header and empty state or task list 
-
-    Error: worker process exited unexpectedly (code=3221225794, signal=null)
-]]>
-</error>
-</testcase>
-<testcase name="Task Management UI › should render task components with accessibility selectors" classname="tasks.spec.ts" time="0">
-<error message="worker process exited unexpectedly (code=3221225794, signal=null)" type="Error">
-<![CDATA[  [webkit] › tasks.spec.ts:13:7 › Task Management UI › should render task components with accessibility selectors 
-
-    Error: worker process exited unexpectedly (code=3221225794, signal=null)
-]]>
-</error>
+</failure>
 </testcase>
 </testsuite>
 </testsuites>

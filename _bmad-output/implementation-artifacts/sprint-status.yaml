@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-09-21
-last_updated: 2026-09-22 (1-10 → review)
+last_updated: 2026-09-23 (epic-3 → in-progress, 3-1 → review, 3-2 → review, 3-3 → review, 3-4 → review, 3-5 → review)
 project: Todo
 project_key: NOKEY
 tracking_system: file-system
@@ -55,17 +55,17 @@ development_status:
   1-10-quiet-initial-hydration-state: review
   epic-1-retrospective: optional
 
-  epic-2: backlog
-  2-1-in-place-delete-confirm: backlog
-  2-2-restyle-task-editing-taskdrawer-and-taskform: backlog
-  2-3-restyle-buttons-and-enforce-hierarchy: backlog
-  2-4-restyle-empty-states: backlog
+  epic-2: in-progress
+  2-1-in-place-delete-confirm: review
+  2-2-restyle-task-editing-taskdrawer-and-taskform: review
+  2-3-restyle-buttons-and-enforce-hierarchy: review
+  2-4-restyle-empty-states: review
   epic-2-retrospective: optional
 
-  epic-3: backlog
-  3-1-restyle-sidebar-and-bottomnav: backlog
-  3-2-responsive-breakpoint-and-touch-target-compliance: backlog
-  3-3-keyboard-accessible-reorder-fallback: backlog
-  3-4-accessibility-pass-contrast-focus-and-semantics: backlog
-  3-5-responsive-and-accessibility-test-coverage: backlog
+  epic-3: in-progress
+  3-1-restyle-sidebar-and-bottomnav: review
+  3-2-responsive-breakpoint-and-touch-target-compliance: review
+  3-3-keyboard-accessible-reorder-fallback: review
+  3-4-accessibility-pass-contrast-focus-and-semantics: review
+  3-5-responsive-and-accessibility-test-coverage: review
   epic-3-retrospective: optional

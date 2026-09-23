@@ -1,7 +1,7 @@
 "use client";
 
 import { Drawer } from "@/components/ui/Drawer";
-import { TaskForm } from "./TaskForm";
+import { TaskForm } from "@/components/tasks/TaskForm";
 import { Task } from "@/types";
 
 interface TaskDrawerProps {

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Task, TaskPriority } from "@/types";
 import { useTaskStore } from "@/stores/task-store";
+import { useConfirmDelete } from "@/hooks/useConfirmDelete";
 import { Calendar, Check, ChevronDown, ChevronUp, Clock3, GripVertical, Lock, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { format, isPast, isToday, isValid, parseISO } from "date-fns";
 
@@ -36,6 +37,9 @@ function formatDue(dateStr?: string) {
 
 export function TaskCard({ task, index = 0, dragHandleProps, isDragging = false, onEdit, showDragHandle = true }: TaskCardProps) {
   const { setStatus, deleteTask, tasks } = useTaskStore();
+  const { confirming: confirmingDelete, triggerRef: deleteRef, handleTrigger: handleDeleteTrigger } = useConfirmDelete(
+    () => deleteTask(task.id)
+  );
   const [expanded, setExpanded] = useState(false);
   const theme = PRIORITY_THEMES[task.priority] || PRIORITY_THEMES.medium;
   const isCompleted = task.status === "completed";
@@ -50,7 +54,7 @@ export function TaskCard({ task, index = 0, dragHandleProps, isDragging = false,
       className={`group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#17191c] transition-all duration-200 ${isDragging ? "z-50 scale-[1.015] shadow-2xl ring-2 ring-amber-400/70" : "hover:border-white/[0.16] hover:bg-[#1a1c20]"} ${isCompleted ? "opacity-75" : ""}`}
       style={{ borderLeftColor: theme.accent, borderLeftWidth: 3 }}
     >
-      <div className="p-4 sm:p-5">
+      <div className="p-4 md:p-5">
         <div className="mb-3 flex items-start justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2">
             {showDragHandle && !isCompleted && <div {...dragHandleProps} className="-ml-2 cursor-grab rounded-lg p-1.5 text-zinc-700 transition-colors hover:bg-white/[0.06] hover:text-zinc-300 active:cursor-grabbing active:text-amber-300" style={{ touchAction: "none" }} title="Drag to reorder"><GripVertical size={18} /></div>}
@@ -68,7 +72,7 @@ export function TaskCard({ task, index = 0, dragHandleProps, isDragging = false,
           <div className="flex shrink-0 items-center gap-1 opacity-70 transition-opacity group-hover:opacity-100">
             <button type="button" onClick={() => setStatus(task.id, isCompleted ? "backlog" : "completed")} className={`rounded-lg p-2 transition-colors ${isCompleted ? "text-emerald-400 hover:bg-emerald-400/10" : "text-zinc-500 hover:bg-emerald-400/10 hover:text-emerald-300"}`} title={isCompleted ? "Restore task" : "Mark as completed"}>{isCompleted ? <RotateCcw size={15} /> : <Check size={16} strokeWidth={2.5} />}</button>
             {onEdit && <button type="button" onClick={() => onEdit(task)} className="rounded-lg p-2 text-zinc-500 transition-colors hover:bg-white/[0.07] hover:text-zinc-200" title="Edit task"><Pencil size={15} /></button>}
-            <button type="button" onClick={() => { if (confirm("Delete this task?")) deleteTask(task.id); }} className="rounded-lg p-2 text-zinc-600 transition-colors hover:bg-rose-400/10 hover:text-rose-300" title="Delete task"><Trash2 size={15} /></button>
+            <button ref={deleteRef} type="button" onClick={handleDeleteTrigger} className="rounded-lg p-2 text-zinc-600 transition-colors hover:bg-white/[0.07] hover:text-zinc-200" title={confirmingDelete ? "Tap again to confirm" : "Delete task"}>{confirmingDelete ? <span className="text-[11px] font-semibold tabular-nums">Confirm?</span> : <Trash2 size={15} />}</button>
           </div>
         </div>
 

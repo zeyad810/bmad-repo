@@ -24,13 +24,14 @@ function SortableTaskRow({
     attributes,
     listeners,
     setNodeRef,
+    setActivatorNodeRef,
     transform,
     transition,
     isDragging,
   } = useSortable({ id: task.id });
 
   return (
-    <div
+    <li
       ref={setNodeRef}
       style={{
         transform: CSS.Transform.toString(transform),
@@ -42,11 +43,12 @@ function SortableTaskRow({
       <TaskRow
         task={task}
         dragHandleProps={{ ...attributes, ...listeners }}
+        dragHandleRef={setActivatorNodeRef}
         isDragging={isDragging}
         isBacklog={isBacklog}
         onEdit={onEdit}
       />
-    </div>
+    </li>
   );
 }
 
@@ -62,7 +64,8 @@ export function DraggableTaskList({ tasks, isBacklog, onEdit }: DraggableTaskLis
       items={tasks.map((t) => t.id)}
       strategy={verticalListSortingStrategy}
     >
-      <div className="flex flex-col gap-4 py-1">
+      {/* role="list" keeps list semantics in Safari/VoiceOver without list styling */}
+      <ul role="list" className="flex flex-col gap-4">
         {tasks.map((task) => (
           <SortableTaskRow
             key={task.id}
@@ -71,7 +74,7 @@ export function DraggableTaskList({ tasks, isBacklog, onEdit }: DraggableTaskLis
             onEdit={onEdit}
           />
         ))}
-      </div>
+      </ul>
     </SortableContext>
   );
 }

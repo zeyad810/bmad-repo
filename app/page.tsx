@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   DndContext,
   closestCenter,
@@ -8,9 +8,14 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  Announcements,
   DragEndEvent,
+  DragStartEvent,
+  ScreenReaderInstructions,
+  UniqueIdentifier,
 } from "@dnd-kit/core";
-import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { describePosition, resolveDrop } from "@/lib/reorder/resolve-drop";
 import { useTaskStore } from "@/stores/task-store";
 import { useTodaySectionTasks, useBacklogSectionTasks } from "@/hooks/useTasks";
 import { DraggableTaskList, SectionDropZone } from "@/components/tasks/DraggableTaskList";
@@ -20,6 +25,17 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { TaskDrawer } from "@/components/tasks/TaskDrawer";
 import { HydrationSkeleton } from "@/components/tasks/HydrationSkeleton";
 import { Task } from "@/types";
+
+// Read via the drag handle's aria-describedby.
+const screenReaderInstructions: ScreenReaderInstructions = {
+  draggable:
+    "To reorder, press Space or Enter to pick up the task. Use the up and down arrow keys to move it, " +
+    "including across the Today and Backlog divider. Press Space or Enter to drop, or Escape to cancel.",
+};
+
+function capitalize(text: string) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
 
 export default function HomePage() {
   const { addTask, settings, reorderTasks, setSortMode, moveTask, hydrated } = useTaskStore();
@@ -39,48 +55,73 @@ export default function HomePage() {
     })
   );
 
-  function sectionOf(id: string): "today" | "backlog" | null {
-    if (todayTasks.some((t) => t.id === id)) return "today";
-    if (backlogTasks.some((t) => t.id === id)) return "backlog";
-    return null;
+  // Set on drag start; keyboard promotes resolve differently (see resolveDrop).
+  const isKeyboardDragRef = useRef(false);
+  const todayIds = todayTasks.map((t) => t.id);
+  const backlogIds = backlogTasks.map((t) => t.id);
+
+  function resolve(activeId: UniqueIdentifier, overId: UniqueIdentifier) {
+    return resolveDrop({
+      activeId: String(activeId),
+      overId: String(overId),
+      today: todayIds,
+      backlog: backlogIds,
+      isKeyboard: isKeyboardDragRef.current,
+    });
+  }
+
+  function handleDragStart(event: DragStartEvent) {
+    isKeyboardDragRef.current = event.activatorEvent instanceof KeyboardEvent;
   }
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (!over) return;
 
-    const activeId = String(active.id);
-    const overId = String(over.id);
-    if (activeId === overId) return;
-
-    const sourceSection = sectionOf(activeId);
-    if (!sourceSection) return;
-
-    const destSection =
-      overId === "today-dropzone" ? "today" :
-      overId === "backlog-dropzone" ? "backlog" :
-      sectionOf(overId);
-    if (!destSection) return;
+    const result = resolve(active.id, over.id);
+    if (!result) return;
 
     setSortMode("manual");
-
-    if (destSection === sourceSection) {
-      // Same-section drag: position only, no status change
-      const list = sourceSection === "today" ? todayTasks : backlogTasks;
-      const oldIndex = list.findIndex((t) => t.id === activeId);
-      const newIndex = list.findIndex((t) => t.id === overId);
-      if (oldIndex < 0 || newIndex < 0) return;
-      reorderTasks(arrayMove(list, oldIndex, newIndex).map((t) => t.id));
-    } else {
-      // Cross-section drag: atomic status+position via moveTask
-      const destList = destSection === "today" ? todayTasks : backlogTasks;
-      const destIds = destList.map((t) => t.id);
-      const insertAt = destIds.indexOf(overId);
-      if (insertAt >= 0) destIds.splice(insertAt, 0, activeId);
-      else destIds.push(activeId); // dropped on the empty-section dropzone
-      moveTask(activeId, destSection === "today" ? "next" : "backlog", destIds);
-    }
+    if (result.kind === "reorder") reorderTasks(result.orderedIds);
+    else moveTask(String(active.id), result.status, result.orderedIds);
   }
+
+  // Human-readable text for @dnd-kit's built-in live region — never raw ids.
+  function titleOf(id: UniqueIdentifier) {
+    return [...todayTasks, ...backlogTasks].find((t) => t.id === String(id))?.title ?? "Task";
+  }
+
+  function currentPosition(id: UniqueIdentifier) {
+    const inToday = todayIds.indexOf(String(id));
+    return inToday >= 0
+      ? `position ${inToday + 1} of ${todayIds.length} in Today`
+      : `position ${backlogIds.indexOf(String(id)) + 1} of ${backlogIds.length} in Backlog`;
+  }
+
+  function projected(activeId: UniqueIdentifier, overId: UniqueIdentifier) {
+    const result = resolve(activeId, overId);
+    if (!result) return null;
+    const { position, total, sectionLabel } = describePosition(result, String(activeId));
+    return `position ${position} of ${total} in ${sectionLabel}`;
+  }
+
+  const announcements: Announcements = {
+    onDragStart({ active }) {
+      return `Picked up ${titleOf(active.id)}. ${capitalize(currentPosition(active.id))}.`;
+    },
+    onDragOver({ active, over }) {
+      if (!over) return `${titleOf(active.id)} is not over a list.`;
+      const where = projected(active.id, over.id);
+      return where ? `${titleOf(active.id)} will move to ${where}.` : `${titleOf(active.id)} is at its original position.`;
+    },
+    onDragEnd({ active, over }) {
+      const where = over ? projected(active.id, over.id) : null;
+      return where ? `${titleOf(active.id)} moved to ${where}.` : `${titleOf(active.id)} dropped at its original position.`;
+    },
+    onDragCancel({ active }) {
+      return `Reorder cancelled. ${titleOf(active.id)} returned to ${currentPosition(active.id)}.`;
+    },
+  };
 
   function handleQuickAdd(title: string) {
     const cleanTitle = title.trim();
@@ -111,14 +152,18 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6">
+      <h1 className="sr-only">My tasks</h1>
       <QuickAddBar onAdd={handleQuickAdd} />
 
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
+        accessibility={{ announcements, screenReaderInstructions }}
+        onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <section>
+        <section aria-labelledby="today-heading">
+          <h2 id="today-heading" className="sr-only">Today</h2>
           {todayTasks.length === 0 ? (
             <SectionDropZone id="today-dropzone">
               <EmptyState title="Nothing here yet" />
@@ -128,9 +173,9 @@ export default function HomePage() {
           )}
         </section>
 
-        <SectionDivider label="BACKLOG" />
+        <SectionDivider label="BACKLOG" id="backlog-heading" />
 
-        <section>
+        <section aria-labelledby="backlog-heading">
           {backlogTasks.length === 0 ? (
             <SectionDropZone id="backlog-dropzone">
               <EmptyState title="Backlog is clear" />
